@@ -32,7 +32,7 @@ class Crawler(val root: URL, val urls: Seq[URL]) {
         seen += url
         Try(download(url)) match {
           case Success(document) =>
-            todo :::= findURLs(url, document).filter(_.toExternalForm.startsWith(root.toExternalForm))
+            todo :::= findURLs(document).filter(_.toExternalForm.startsWith(root.toExternalForm))
             docs += (url -> document.html.length)
           case Failure(exception) => println(s"Download failed: $exception")
         }
@@ -48,7 +48,7 @@ object Crawler {
     Jsoup.connect(url.toExternalForm).execute().parse()
   }
 
-  def findURLs(base: URL, doc: Document): List[URL] = {
+  def findURLs(doc: Document): List[URL] = {
     doc.select("a[href]").asScala  // find all anchor tags
       .map(_ attr "abs:href")                 // resolve absolute URL from href attribute
       .map(_.split("#").head)         // drop fragment
