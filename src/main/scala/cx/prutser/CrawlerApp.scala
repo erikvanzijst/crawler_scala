@@ -36,8 +36,6 @@ class Crawler(val root: URL, val urls: Seq[URL]) {
             docs += (url -> document.html.length)
           case Failure(exception) => println(s"Download failed: $exception")
         }
-      } else {
-        println(s"Skipping duplicate URL $url")
       }
     }
     docs.toMap
@@ -54,6 +52,7 @@ object Crawler {
     doc.select("a[href]").asScala  // find all anchor tags
       .map(_ attr "abs:href")                 // resolve absolute URL from href attribute
       .map(_.split("#").head)         // drop fragment
+      .filter(!_.isEmpty)
       .map(new URL(_))                        // convert to Java URL
       .foldRight[List[URL]](List.empty)(_ :: _)
   }
