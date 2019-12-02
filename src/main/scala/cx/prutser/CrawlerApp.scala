@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document
 object CrawlerApp extends App {
   println(args.mkString(" "))
   new Crawler(new URL(args.head), for (u <- args.tail) yield new URL(u)).crawl().foreach {
-    case (url, len) => println(s"Length of $url : $len\n")
+    case (url, len) => println(s"Length of $url : $len")
   }
 }
 
@@ -21,9 +21,9 @@ class Crawler(val root: URL, val urls: Seq[URL]) {
   import Crawler._
 
   def crawl(): Map[URL, Int] = {
-    var seen: MSet[URL] = MSet()
+    val seen: MSet[URL] = MSet()
+    val docs: MMap[URL, Int] = MMap()
     var todo = urls.toList
-    var docs: MMap[URL, Int] = MMap()
 
     while (todo != Nil) {
       val url = todo.head
